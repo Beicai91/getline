@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <stdlib.h>
 #include "get_next_line.h"
+#include <stdlib.h>
+#include <stddef.h>
 
 int	ft_strlen(char *s)
 {
@@ -23,10 +24,10 @@ int	ft_strlen(char *s)
 	return (len);
 }
 
-char	*ft_substr(char *origin, unsigned int start, size_t len)
+char	*ft_substr(char *origin, int start, int len)
 {
 	char	*sub;
-	int	i;
+	int		i;
 
 	if (!origin)
 		return (NULL);
@@ -51,8 +52,8 @@ char	*ft_substr(char *origin, unsigned int start, size_t len)
 char	*ft_strdup(char *s)
 {
 	char	*dup;
-	int	len;
-	int	i;
+	int		len;
+	int		i;
 
 	if (!s)
 		return (NULL);
@@ -61,7 +62,7 @@ char	*ft_strdup(char *s)
 	if (!dup)
 		return (NULL);
 	i = 0;
-	while(s[i])
+	while (s[i])
 	{
 		dup[i] = s[i];
 		i++;
@@ -72,10 +73,10 @@ char	*ft_strdup(char *s)
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {
-	int	len;
+	int		len;
 	char	*join;
-	int	i;
-	int	j;
+	int		i;
+	int		j;
 
 	len = ft_strlen((char *)s1) + ft_strlen((char *)s2);
 	join = malloc(sizeof(char) * (len + 1));
@@ -101,7 +102,6 @@ char	*ft_strjoin(char const *s1, char const *s2)
 char	*ft_strchr(const char *s, int c)
 {
 	int	i;
-	int	len;
 
 	if (!s)
 		return (NULL);

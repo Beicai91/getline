@@ -10,38 +10,58 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdlib.h>
+#include "get_next_line.h"
 #include <fcntl.h>
 #include <stdio.h>
-#include "get_next_line.h"
+#include <stdlib.h>
+#include <unistd.h>
+
+char	*join_free(char *storage, char *buffer)
+{
+	char	*temp;
+
+	temp = ft_strjoin(storage, buffer);
+	free(storage);
+	storage = NULL;
+	return (temp);
+}
 
 char	*read_store_check(char *buffer, int fd, char *storage)
 {
-	char	*temp;
 	ssize_t	bytes_read;
 
 	if (!storage)
 		storage = ft_strdup("");
 	bytes_read = 1;
-	while(bytes_read > 0)
+	while (bytes_read > 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
-		//printf("%zd bytes read\n", bytes_read);
 		if (bytes_read < 0)
 		{
-			free (storage);
+			free(storage);
 			return (NULL);
 		}
-		if (bytes_read == 0)
-			return (storage);
 		buffer[bytes_read] = '\0';
-		//printf("inside buffer: %s\n", buffer);
-		storage = ft_strjoin(storage, buffer);
+		if (bytes_read == 0)
+		{
+			storage = join_free(storage, buffer);
+			break ;
+		}
+		storage = join_free(storage, buffer);
 		if (ft_strchr(storage, '\n'))
 			break ;
 	}
 	return (storage);
+}
+
+char	*free_next(char *storage, int index, int len)
+{
+	char	*temp;
+
+	temp = ft_substr(storage, index, len);
+	free(storage);
+	(storage) = NULL;
+	return (temp);
 }
 
 char	*clear_line(char **storage)
@@ -49,70 +69,63 @@ char	*clear_line(char **storage)
 	char	*temp;
 	char	*line;
 
+	if (*(*storage) == '\0')
+	{
+		free(*storage);
+		*storage = NULL;
+		return (NULL);
+	}
 	temp = (*storage);
 	while (*temp)
 	{
 		if (*temp == '\n')
-			break ;
-		temp++;
-	}
-	if (ft_strchr((*storage), '\n'))
-	{
-		if (!(*(temp + 1)))
-			return (*storage);
-		else
 		{
 			line = ft_substr((*storage), 0, temp - (*storage) + 1);
-			(*storage) = ft_substr((*storage), temp - (*storage) + 1, ft_strlen(temp + 1));
+			(*storage) = free_next(*storage, temp - (*storage) + 1,
+					ft_strlen(temp + 1));
+			return (line);
 		}
+		temp++;
 	}
-	else
-		return (*storage);
+	line = ft_substr((*storage), 0, ft_strlen(*storage));
+	free(*storage);
+	*storage = NULL;
 	return (line);
 }
 
 char	*get_next_line(int fd)
 {
 	static char	*storage;
-	char	*buffer;
-	char	*line;
+	char		*buffer;
+	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return NULL;
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	{
+		free(storage);
+		storage = NULL;
+		return (NULL);
+	}
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
-		return NULL;
+		return (NULL);
 	storage = read_store_check(buffer, fd, storage);
-	//printf("now the storage content is %s\n", storage);
 	line = clear_line(&storage);
-	//printf("What's remained in storage is %s\n", storage);
 	free(buffer);
+	buffer = NULL;
 	return (line);
 }
-
+/*
 int	main(void)
 {
-	int	fd;
+	int		fd;
 	char	*line;
-	char	*line2;
-	char	*line3;
 
-	fd = open("file.txt", O_RDONLY);
+	fd = open("test.txt", O_RDONLY);
 	line = get_next_line(fd);
-	printf("%s\n", line);
-	line2 = get_next_line(fd);
-	printf("%s\n", line2);
-	line3 = get_next_line(fd);
-	printf("%s\n", line3);
-	printf("%s\n", get_next_line(fd));
-	printf("%s\n", get_next_line(fd));
-	printf("%s\n", get_next_line(fd));
-	/*
-	while (!line)
+	while (line)
 	{
-		line = get_next_line(fd);
 		printf("%s\n", line);
-	}*/
+		line = get_next_line(fd);
+	}
 	return (0);
-}
-		
+}*/
