@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bcai <bcai@student.42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 11:21:04 by bcai              #+#    #+#             */
-/*   Updated: 2023/11/12 01:52:32 by bcai             ###   ########.fr       */
+/*   Updated: 2023/11/13 11:47:31 by bcai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,116 +16,101 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-char	*join_free(char *storage, char *buffer)
+char	*join_free(char *substorage, char *buffer)
 {
 	char	*temp;
 
-	temp = ft_strjoin(storage, buffer);
-	free(storage);
-	storage = NULL;
+	temp = ft_strjoin(substorage, buffer);
+	free(substorage);
+	substorage = NULL;
 	return (temp);
 }
 
-char	*read_store_check(char *buffer, int fd, char *storage)
+char	*read_store_check(char *buffer, int fd, char *substorage)
 {
 	ssize_t	bytes_read;
 
-	if (!storage)
-		storage = ft_strdup("");
+	if (!substorage)
+		substorage = ft_strdup("");
 	bytes_read = 1;
 	while (bytes_read > 0)
 	{
 		bytes_read = read(fd, buffer, BUFFER_SIZE);
 		if (bytes_read < 0)
 		{
-			free(storage);
+			free(substorage);
 			return (NULL);
 		}
 		buffer[bytes_read] = '\0';
 		if (bytes_read == 0)
 		{
-			storage = join_free(storage, buffer);
+			substorage = join_free(substorage, buffer);
 			break ;
 		}
-		storage = join_free(storage, buffer);
-		if (ft_strchr(storage, '\n'))
+		substorage = join_free(substorage, buffer);
+		if (ft_strchr(substorage, '\n'))
 			break ;
 	}
-	return (storage);
+	return (substorage);
 }
 
-char	*free_cut(char *storage, int index, int len)
+char	*free_cut(char *substorage, int index, int len)
 {
 	char	*temp;
 
-	temp = ft_substr(storage, index, len);
-	free(storage);
-	(storage) = NULL;
+	temp = ft_substr(substorage, index, len);
+	free(substorage);
+	(substorage) = NULL;
 	return (temp);
 }
 
-char	*clear_line(char **storage)
+char	*clear_line(char **substorage)
 {
 	char	*temp;
 	char	*line;
 
-	if (*(*storage) == '\0')
+	if (*(*substorage) == '\0')
 	{
-		free(*storage);
-		*storage = NULL;
+		free(*substorage);
+		*substorage = NULL;
 		return (NULL);
 	}
-	temp = (*storage);
+	temp = (*substorage);
 	while (*temp)
 	{
 		if (*temp == '\n')
 		{
-			line = ft_substr((*storage), 0, temp - (*storage) + 1);
-			(*storage) = free_cut(*storage, temp - (*storage) + 1,
+			line = ft_substr((*substorage), 0, temp - (*substorage) + 1);
+			(*substorage) = free_cut(*substorage, temp - (*substorage) + 1,
 					ft_strlen(temp + 1));
 			return (line);
 		}
 		temp++;
 	}
-	line = ft_substr((*storage), 0, ft_strlen(*storage));
-	free(*storage);
-	*storage = NULL;
+	line = ft_substr((*substorage), 0, ft_strlen(*substorage));
+	free(*substorage);
+	*substorage = NULL;
 	return (line);
 }
 
 char	*get_next_line(int fd)
 {
-	static char	*storage;
+	static char	*storage[OPEN_MAX];
 	char		*buffer;
 	char		*line;
 
 	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 	{
-		free(storage);
-		storage = NULL;
+		free(storage[fd]);
+		storage[fd] = NULL;
 		return (NULL);
 	}
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
 		return (NULL);
-	storage = read_store_check(buffer, fd, storage);
-	line = clear_line(&storage);
+	storage[fd] = read_store_check(buffer, fd, storage[fd]);
+	line = clear_line(&(storage[fd]));
 	free(buffer);
 	buffer = NULL;
 	return (line);
 }
-/*
-int	main(void)
-{
-	int		fd;
-	char	*line;
-
-	fd = open("test.txt", O_RDONLY);
-	line = get_next_line(fd);
-	while (line)
-	{
-		printf("%s\n", line);
-		line = get_next_line(fd);
-	}
-	return (0);
-}*/
