@@ -6,14 +6,17 @@
 /*   By: bcai <bcai@student.42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 14:17:17 by bcai              #+#    #+#             */
-/*   Updated: 2023/11/12 01:54:55 by bcai             ###   ########.fr       */
+/*   Updated: 2023/11/21 11:00:56 by bcai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-//# define BUFFER_SIZE
+# ifndef BUFFER_SIZE
+#  define BUFFER_SIZE 5
+# endif
+
 # include <limits.h>
 # include <stddef.h>
 
