@@ -6,11 +6,11 @@
 /*   By: bcai <bcai@student.42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 11:21:04 by bcai              #+#    #+#             */
-/*   Updated: 2023/11/13 11:47:31 by bcai             ###   ########.fr       */
+/*   Updated: 2023/11/28 15:09:05 by bcai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
