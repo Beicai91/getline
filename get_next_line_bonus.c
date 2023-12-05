@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -99,10 +99,15 @@ char	*get_next_line(int fd)
 	char		*buffer;
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0)
+		return (NULL);
+	else if (read(fd, 0, 0) < 0)
 	{
-		free(storage[fd]);
-		storage[fd] = NULL;
+		if (storage[fd] != NULL)
+		{
+			free(storage[fd]);
+			storage[fd] = NULL;
+		}
 		return (NULL);
 	}
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));

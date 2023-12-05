@@ -20,6 +20,11 @@
 # include <limits.h>
 # include <stddef.h>
 
+int		ft_strlen(char *s);
+char	*ft_substr(char *origin, int start, int len);
+char	*ft_strdup(char *s);
+char	*ft_strjoin(char const *s1, char const *s2);
+char	*ft_strchr(const char *s, int c);
 char	*get_next_line(int fd);
 char	*read_store_check(char *buffer, int fd, char *substorage);
 char	*join_free(char *substorage, char *buffer);
