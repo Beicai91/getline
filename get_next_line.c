@@ -6,7 +6,7 @@
 /*   By: bcai <bcai@student.42lausanne.ch>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/11 11:21:04 by bcai              #+#    #+#             */
-/*   Updated: 2023/11/12 01:52:32 by bcai             ###   ########.fr       */
+/*   Updated: 2023/12/05 15:12:30 by bcai             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,15 +99,10 @@ char	*get_next_line(int fd)
 	char		*buffer;
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (NULL);
-	else if (read(fd, 0, 0) < 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, 0, 0) < 0)
 	{
-		if (storage != NULL)
-		{
-			free(storage);
-			storage = NULL;
-		}
+		free(storage);
+		storage = NULL;
 		return (NULL);
 	}
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
